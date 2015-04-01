@@ -1,0 +1,12 @@
+<%include header.ejs%>
+<%include navigator.ejs%>
+    <div class="container">
+      <h1 style="font-family: Arial;text-align: center"><p style="text-align: center;margin-top:8%"><strong>Successfully logged in</strong></p></h1>
+      <form class="form-signin" action="joinRoomRequest" method="post">
+        <h2><h2 style="font-family: Arial;text-align: center"><small>Please type in a room number</small></h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="roomNumber" style="margin-bottom:10%"class="form-control" placeholder="room number" name="roomNumber" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Join</button>
+      </form>
+    </div>
+<%include end.ejs%>

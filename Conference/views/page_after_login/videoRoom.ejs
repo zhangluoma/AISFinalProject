@@ -1,0 +1,156 @@
+<% include header.ejs %>
+<style>
+    .videoContainer {
+        position: relative;
+        width: 200px;
+        height: 150px;
+    }
+    .videoContainer video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    .volume {
+        position: absolute;
+        left: 15%;
+        width: 70%;
+        bottom: 5px;
+        height: 5px;
+        display: none;
+    }
+    .connectionstate {
+        position: absolute;
+        top: 0px;
+        width: 100%;
+        text-align: center;
+        color: #fff
+    }
+    #localScreenContainer {
+        display: none;
+    }
+</style>
+<div class="container">
+<div class="masthead">
+  <h3 class="text-muted" style="margin-bottom:2%">Let's Chat<button class="btn btn-primary " type="submit" style="float:right">Log off</button><div class="text-muted" style="float:right;margin-right:2%">Room Number:<%=roomNumber%></div>
+  </h3>
+  <nav>
+    <ul class="nav nav-justified" style="margin-bottom:2%">
+      <li class="active"><a href="#">Video Chat</a></li>
+      <li><a href="#">Audio</a></li>
+      <li><a href="#">File</a></li>
+      <li><a href="#">My Account</a></li>
+      <li><a href="#">Contact Us</a></li>
+    </ul>
+  </nav>
+  <div class="row">
+    <div class="col-lg-4">
+        <div class="thumbnail">
+          <div class="videoContainer">
+            <video id="localVideo" style="height: 150px;" oncontextmenu="return false;"></video>
+            <meter id="localVolume" class="volume" min="-45" max="-20" high="-25" low="-40"></meter>
+          </div>
+            <div class="caption">
+              <h4>Name:Lim Yoona</h4>
+              <p>Self introduction:</p>
+            </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="thumbnail">
+          <div class="videoContainer">
+            <div id="remotes"></div>
+            <meter id="localVolume" class="volume" min="-45" max="-20" high="-25" low="-40"></meter>
+          </div>
+            <div class="caption">
+              <h4>Name:Lim Yoona</h4>
+              <p>Self introduction:</p>
+            </div>
+        </div>
+      </div>
+  </div>
+</div>
+<script>
+    var webrtc = new SimpleWebRTC({
+        localVideoEl: 'localVideo',
+        remoteVideoEl: '',
+        autoRequestMedia: true,
+        debug: false,
+        detectSpeakingEvents: true,
+        autoAdjustMic: false
+    });
+    webrtc.on('readyToCall', function () {
+                requestJoinRoom();
+            });
+    webrtc.on('localStream', function (stream) {
+    });
+    // we did not get access to the camera
+    webrtc.on('localMediaError', function (err) {
+    });
+    webrtc.on('videoAdded', function (video, peer) {
+        console.log('video added', peer);
+        var remotes = document.getElementById('remotes');
+        if (remotes) {
+            var container = document.createElement('div');
+            container.className = 'videoContainer';
+            container.id = 'container_' + webrtc.getDomId(peer);
+            container.appendChild(video);
+
+            // suppress contextmenu
+            video.oncontextmenu = function () { return false; };
+
+            // resize the video on click
+            video.onclick = function () {
+                container.style.width = video.videoWidth + 'px';
+                container.style.height = video.videoHeight + 'px';
+            };
+
+            // show the remote volume
+            var vol = document.createElement('meter');
+            vol.id = 'volume_' + peer.id;
+            vol.className = 'volume';
+            vol.min = -45;
+            vol.max = -20;
+            vol.low = -40;
+            vol.high = -25;
+            container.appendChild(vol);
+            
+            // show the ice connection state
+            if (peer && peer.pc) {
+                var connstate = document.createElement('div');
+                connstate.className = 'connectionstate';
+                container.appendChild(connstate);
+                peer.pc.on('iceConnectionStateChange', function (event) {
+                    switch (peer.pc.iceConnectionState) {
+                    case 'checking': 
+                        connstate.innerText = 'Connecting to peer...';
+                        break;
+                    case 'connected':
+                    case 'completed': // on caller side
+                        $(vol).show();
+                        connstate.innerText = 'Connection established.';
+                        break;
+                    case 'disconnected':
+                        connstate.innerText = 'Disconnected.';
+                        break;
+                    case 'failed':
+                        connstate.innerText = 'Connection failed.';
+                        break;
+                    case 'closed':
+                        connstate.innerText = 'Connection closed.';
+                        break;
+                    }
+                });
+            }
+            remotes.appendChild(container);
+        }
+    });
+    webrtc.on('videoRemoved', function (video, peer) {
+          console.log('video removed ', peer);
+          var remotes = document.getElementById('remotes');
+          var el = document.getElementById(peer ? 'container_' + webrtc.getDomId(peer) : 'localScreenContainer');
+          if (remotes && el) {
+              remotes.removeChild(el);
+          }
+      });
+</script>
+<% include end.ejs %>
