@@ -1,75 +1,13 @@
-<% include header.ejs %>
-<style>
-    .videoContainer {
-        position: relative;
-        width: 200px;
-        height: 150px;
+    function generateVideoFrame(peerId){
+        var box = document.createElement("div");
+        box.setAttribute("class","thumbnail");
+        var box2 = document.createElement("div");
+        box2.setAttribute("class","col-lg-4");
+        box2.appendChild(box);
+        box2.setAttribute("id","video:"+peerId);
+        document.getElementById("videoFrames").appendChild(box2);
+        return box;
     }
-    .videoContainer video {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-    .volume {
-        position: absolute;
-        left: 15%;
-        width: 70%;
-        bottom: 5px;
-        height: 5px;
-        display: none;
-    }
-    .connectionstate {
-        position: absolute;
-        top: 0px;
-        width: 100%;
-        text-align: center;
-        color: #fff
-    }
-    #localScreenContainer {
-        display: none;
-    }
-</style>
-<div class="container">
-<div class="masthead">
-  <h3 class="text-muted" style="margin-bottom:2%">Let's Chat<button class="btn btn-primary " type="submit" style="float:right">Log off</button><div class="text-muted" style="float:right;margin-right:2%">Room Number:<%=roomNumber%></div>
-  </h3>
-  <nav>
-    <ul class="nav nav-justified" style="margin-bottom:2%">
-      <li class="active"><a href="#">Video Chat</a></li>
-      <li><a href="#">Audio</a></li>
-      <li><a href="#">File</a></li>
-      <li><a href="#">My Account</a></li>
-      <li><a href="#">Contact Us</a></li>
-    </ul>
-  </nav>
-  <div class="row">
-    <div class="col-lg-4">
-        <div class="thumbnail">
-          <div class="videoContainer">
-            <video id="localVideo" style="height: 150px;" oncontextmenu="return false;"></video>
-            <meter id="localVolume" class="volume" min="-45" max="-20" high="-25" low="-40"></meter>
-          </div>
-            <div class="caption">
-              <h4>Name:Lim Yoona</h4>
-              <p>Self introduction:</p>
-            </div>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="thumbnail">
-          <div class="videoContainer">
-            <div id="remotes"></div>
-            <meter id="localVolume" class="volume" min="-45" max="-20" high="-25" low="-40"></meter>
-          </div>
-            <div class="caption">
-              <h4>Name:Lim Yoona</h4>
-              <p>Self introduction:</p>
-            </div>
-        </div>
-      </div>
-  </div>
-</div>
-<script>
     var webrtc = new SimpleWebRTC({
         localVideoEl: 'localVideo',
         remoteVideoEl: '',
@@ -79,6 +17,10 @@
         autoAdjustMic: false
     });
     webrtc.on('readyToCall', function () {
+                var mainV = document.getElementById("mainVideo");
+                console.log(mainV.parentNode.offsetWidth);
+                mainV.style.width=0.975*mainV.parentNode.offsetWidth+"px";
+                mainV.style.height=0.7*mainV.parentNode.offsetWidth+"px";
                 requestJoinRoom();
             });
     webrtc.on('localStream', function (stream) {
@@ -88,9 +30,10 @@
     });
     webrtc.on('videoAdded', function (video, peer) {
         console.log('video added', peer);
-        var remotes = document.getElementById('remotes');
+        var remotes = generateVideoFrame(webrtc.getDomId(peer));
         if (remotes) {
             var container = document.createElement('div');
+            //container.style.textAlign="center";
             container.className = 'videoContainer';
             container.id = 'container_' + webrtc.getDomId(peer);
             container.appendChild(video);
@@ -99,11 +42,6 @@
             video.oncontextmenu = function () { return false; };
 
             // resize the video on click
-            video.onclick = function () {
-                container.style.width = video.videoWidth + 'px';
-                container.style.height = video.videoHeight + 'px';
-            };
-
             // show the remote volume
             var vol = document.createElement('meter');
             vol.id = 'volume_' + peer.id;
@@ -126,22 +64,27 @@
                         break;
                     case 'connected':
                     case 'completed': // on caller side
-                        $(vol).show();
+                        //$(vol).show();
                         connstate.innerText = 'Connection established.';
                         break;
                     case 'disconnected':
-                        connstate.innerText = 'Disconnected.';
+                        //connstate.innerText = 'Disconnected.';
                         break;
                     case 'failed':
                         connstate.innerText = 'Connection failed.';
                         break;
                     case 'closed':
                         connstate.innerText = 'Connection closed.';
+                        console.log("video:"+webrtc.getDomId(peer));
+                        var currFrame = document.getElementById("video:"+webrtc.getDomId(peer));
+                        currFrame.parentNode.removeChild(currFrame);
                         break;
                     }
                 });
             }
             remotes.appendChild(container);
+            container.style.width=0.975*container.parentNode.offsetWidth+"px";
+            container.style.height=0.7*container.parentNode.offsetWidth+"px";
         }
     });
     webrtc.on('videoRemoved', function (video, peer) {
@@ -152,5 +95,3 @@
               remotes.removeChild(el);
           }
       });
-</script>
-<% include end.ejs %>

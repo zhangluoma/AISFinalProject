@@ -1,0 +1,19 @@
+<% include header.ejs %>
+<div class="container">
+    <div class="masthead">
+      <h3 class="text-muted" style="margin-bottom:2%">Let's Chat<button class="btn btn-primary " type="submit" style="float:right">Log off</button><div class="text-muted" style="float:right;margin-right:2%">Room Number:<%=roomNumber%></div>
+      </h3>
+      <nav>
+        <ul class="nav nav-justified" style="margin-bottom:2%">
+          <li class="active"><a href="#">Video Chat</a></li>
+          <li><a href="#">Audio</a></li>
+          <li><a href="#">File</a></li>
+          <li><a href="#">My Account</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </nav>
+      <%include video.ejs%>
+      <%include chatRoom.ejs%>
+    </div>
+</div>
+<% include end.ejs %>

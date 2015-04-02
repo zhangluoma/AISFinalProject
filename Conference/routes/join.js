@@ -4,6 +4,6 @@ var info = require('info');
 /* GET home page. */
 router.post('/', function(req, res, next) {
 	var number = req.body.roomNumber;
-  	res.render('page_after_login/videoRoom', {roomNumber: number});
+  	res.render('page_after_login/body', {roomNumber: number});
 });
 module.exports = router;
