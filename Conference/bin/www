@@ -39,6 +39,10 @@ io.sockets.on('connection',function(socket){
   socket.on('requestJoin',function(roomId){
     
   });
+  socket.on('chatMessage',function(message){
+    console.log(message);
+    io.sockets.in(message['roomNumber']).emit('chatMessage',message['text']);
+  });
 })
 /**
  * Normalize a port into a number, string, or false.

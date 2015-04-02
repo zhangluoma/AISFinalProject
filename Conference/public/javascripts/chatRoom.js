@@ -8,5 +8,16 @@ var $messageLine = '<div class="comment"><a class="avatar"><img src="http://i60.
     + msg.substring(msg.indexOf(':')+1)
     + '</div></div></div>';
 $chatWindow.append($messageLine);
-document.getElementById('scrollable').scrollTop=document.getElementById('scrollable').scrollHeight;
+//document.getElementById('scrollable').scrollTop=document.getElementById('scrollable').scrollHeight;
 }
+function sendChat(){
+	sendMessage("chatMessage",{roomNumber: roomNumber, text: userName+":"+document.getElementById('chat_message').value});
+}
+function pressToSend(event){
+	if(event.keyCode==13){
+		sendChat();
+	}
+}
+socket.on('chatMessage',function(message){
+   appendChat(message);
+ });
