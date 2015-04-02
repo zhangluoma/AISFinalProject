@@ -14,10 +14,16 @@ function sendChat(){
 	sendMessage("chatMessage",{roomNumber: roomNumber, text: userName+":"+document.getElementById('chat_message').value});
 }
 function pressToSend(event){
-	if(event.keyCode==13){
+	if(document.getElementById('chat_message').value!=''&&event.keyCode==13){
 		sendChat();
+        document.getElementById('chat_message').value='';
 	}
 }
 socket.on('chatMessage',function(message){
    appendChat(message);
+   scrollDown('scrollable');
  });
+function scrollDown(divId){
+    var a = document.getElementById(divId);
+    a.scrollTop=a.scrollHeight;
+}

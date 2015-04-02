@@ -2,7 +2,7 @@
         var box = document.createElement("div");
         box.setAttribute("class","thumbnail");
         var box2 = document.createElement("div");
-        box2.setAttribute("class","col-lg-4");
+        box2.setAttribute("class","col-lg-6");
         box2.appendChild(box);
         box2.setAttribute("id","video:"+peerId);
         document.getElementById("videoFrames").appendChild(box2);
@@ -19,9 +19,9 @@
     webrtc.on('readyToCall', function () {
                 var mainV = document.getElementById("mainVideo");
                 console.log(mainV.parentNode.offsetWidth);
+                sendVideoRequest();
                 mainV.style.width=0.975*mainV.parentNode.offsetWidth+"px";
                 mainV.style.height=0.7*mainV.parentNode.offsetWidth+"px";
-                requestJoinRoom();
             });
     webrtc.on('localStream', function (stream) {
     });

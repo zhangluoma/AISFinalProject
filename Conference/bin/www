@@ -36,9 +36,6 @@ io.sockets.on('connection',function(socket){
     socket.join(room);
     io.sockets.in(room).emit('message','what the fuck!');
   });
-  socket.on('requestJoin',function(roomId){
-    
-  });
   socket.on('chatMessage',function(message){
     console.log(message);
     io.sockets.in(message['roomNumber']).emit('chatMessage',message['text']);

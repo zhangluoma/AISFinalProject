@@ -8,16 +8,9 @@
         <div class="row">    
           <div class="col-lg-4 col-lg-offset-4">
             <!--<label for="inputEmail" class="sr-only">Email address</label>-->
-            <input style="margin-bottom:2%" id="roomNumber" class="form-control" placeholder="Room number" name="roomNumber" required autofocus> 
+            <input style="margin-bottom:2%" id="roomNumber" class="form-control" placeholder="Room number" name="roomNumber" <%if(roomNumber!=null){%>value="<%=roomNumber%>"<%}%> required autofocus> 
           </div>
         </div>
-        <div class="row">
-          <div class="col-lg-4 col-lg-offset-4"> 
-            <input style="margin-bottom:4%" type="text" id="name" class="form-control" placeholder="Your name shown in this room" name="nickName" required autofocus> 
-          </div>
-        </div>
-        
-       
         <div class="col-lg-4 col-lg-offset-4">      
           <button class="btn btn-lg btn-primary btn-block" style="submit">Join</button>
         </div>

@@ -1,24 +1,29 @@
 <% include header.ejs %>
 <div class="container">
     <div class="masthead">
-      <h3 class="text-muted" style="margin-bottom:2%">Let's Chat<button class="btn btn-primary " type="submit" style="float:right">Log off</button><div class="text-muted" style="float:right;margin-right:2%">Room Number:<%=roomNumber%></div>
-      </h3>
+      <img src="images/logo.png" height="25%" width="25%">
+      <a href="back"><button class="btn btn-primary" type="submit" style="float:right">Back</button></a>
+      <!--<div class="text-muted" style="float:right;margin-right:2%">Room Number:<%=roomNumber%></div>-->
       <nav>
         <ul class="nav nav-justified" style="margin-bottom:2%">
-          <li class="active"><a href="#">Video Chat</a></li>
+          <li><a href="#">Dashboard</a></li>
+          <li class="active" onclick="clickTest(1)"><a href="#">VideoChat</a></li>
           <li><a href="#">Audio</a></li>
           <li><a href="#">File</a></li>
-          <li><a href="#">My Account</a></li>
-          <li><a href="#">Contact Us</a></li>
         </ul>
       </nav>
-      <div class="col-sm-8 col-md-8" style="padding:0px">
-        <%include video.ejs%>
-      </div>
-      <div class="col-sm-4 col-md-4" style="padding:0px">
-        <%include chatRoom.ejs%>
+        <div class="col-sm-8 col-md-8" style="padding:0px">
+            <%include video.ejs%>
+        </div>
+        <div class="col-sm-4 col-md-4" style="padding:0px">
+          <%include chatRoom.ejs%>
+        </div>
       </div>
       <%include fileShare.ejs%>
-    </div>
 </div>
+<script>
+  function clickTest(m){
+    alert(m);
+  }
+</script>
 <% include end.ejs %>
