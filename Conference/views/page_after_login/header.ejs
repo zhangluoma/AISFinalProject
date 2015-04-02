@@ -27,12 +27,13 @@
     <![endif]-->
   </head>
   <body>
-    <input id="roomNumber" value=<%=roomNumber%>>
+    <input hidden id="roomNumber" value=<%=roomNumber%>>
+    <input hidden id="userName" value=<%=userName%>>
+    <script src="javascripts/readParams.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script src="javascripts/latest.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var roomNumber = document.getElementById('roomNumber').value;
       var socket = io.connect();
       socket.on('message',function(message){
          console.log('I receive ',message);
