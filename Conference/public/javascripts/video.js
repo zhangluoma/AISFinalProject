@@ -19,7 +19,7 @@
     webrtc.on('readyToCall', function () {
                 var mainV = document.getElementById("mainVideo");
                 console.log(mainV.parentNode.offsetWidth);
-                //clickActive("videoLabel");
+                clickActive("videoLabel");
                 sendVideoRequest();
                 mainV.style.width=0.975*mainV.parentNode.offsetWidth+"px";
                 mainV.style.height=0.7*mainV.parentNode.offsetWidth+"px";
