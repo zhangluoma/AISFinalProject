@@ -11,6 +11,12 @@
           <li id= "fileLabel" onclick="clickActive('fileLabel')"><a href="#">File</a></li>
         </ul>
       </nav>
+    </div>
+      <div id="dashboardPart">
+        <%include dashboard.ejs%>
+      </div>
+      <div id="filePart">
+        <%include fileShare.ejs%>
       </div>
       <div id="videoPart">
         <div class="col-sm-8 col-md-8" style="padding:0px">
@@ -19,11 +25,6 @@
           <div class="col-sm-4 col-md-4" style="padding:0px">
             <%include chatRoom.ejs%>
         </div>
-      </div>
-      <div id="filePart">
-        <%include fileShare.ejs%>
-      </div>
-      <div id="dashboardPart">
       </div>
 </div>
 <script>
@@ -42,6 +43,7 @@
   function clickActive(type){
     inactiveAll();
     document.getElementById(type).className="active";
+    console.log(allPart[type]);
     $('#'+allPart[type]).show();
   }
 </script>
