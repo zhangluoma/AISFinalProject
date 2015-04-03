@@ -40,6 +40,14 @@ io.sockets.on('connection',function(socket){
     console.log(message);
     io.sockets.in(message['roomNumber']).emit('chatMessage',message['text']);
   });
+  socket.on('edit',function(message){
+    console.log(message);
+    io.sockets.in(message['roomNumber']).emit('edit',message);
+  });
+  socket.on('delete',function(message){
+    console.log(message);
+    io.sockets.in(message['roomNumber']).emit('delete',message);
+  })
 })
 /**
  * Normalize a port into a number, string, or false.
