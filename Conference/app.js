@@ -14,35 +14,57 @@ app.set('view engine', 'ejs');
 
 
 //========upload code===========================
-var multer = require('multer');
-var fileUploadDone = false;
-var db = require('dbHelper');
+var db = require('dbHelper'),
+    http = require('http'),
+    formidable = require('formidable'),
+    fs = require('fs'),
+    path = require('path');
 
-app.use(multer({ 
-    dest: './uploads/',
-    rename: function (fieldname, filename) {
-        return filename;
-    },
-    onFileUploadStart: function (file) {
-        console.log(file.originalname + ' is uploading ...')
-    },
-    onFileUploadComplete: function (file) {
-        console.log(file.fieldname + ' uploaded to  ' + file.path)
-        fileUploadDone=true;
-    }
-}));
+app.post('/upload', function(req, res) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        // `file` is the name of the <input> field of type `file`
+        var old_path = files.file.path,
+            file_size = files.file.size,
+            file_ext = files.file.name.split('.').pop(),
+            index = old_path.lastIndexOf('/') + 1,
+            file_name = files.file.name.split('.')[0],
+            new_path = path.join(process.env.PWD, '/uploads/', file_name + '.' + file_ext),
+            roomNmber = fields.roomNumber;
+
+        //add to db
+        var addFiletoTable = function(){
+          db.query("insert into file(roomnumber,filename) values('"+roomNmber+"','"+file_name+"')",function(error,results){});
+        };
+        //test
+        var select_all_file_by_roomnumber = function(){
+          db.query("select * from file where roomnumber = '"+roomNmber+"'",function(error,results){
+            console.log(results);
+            console.log("error = "error);
+            console.log("just printed the sql select result.");
+          });
+        };
+        addFiletoTable();
+        select_all_file_by_roomnumber();
+
+        fs.readFile(old_path, function(err, data) {
+            fs.writeFile(new_path, data, function(err) {
+                fs.unlink(old_path, function(err) {
+                    if (err) {
+                        res.status(500);
+                        res.json({'success': false});
+                    } else {
+                        res.status(200);
+                        res.json({'success': true});
+                    }
+                });
+            });
+        });
+    });
 
 
-// app.post('/fileUploaded',function(req,res){
-//     if(fileUploadDone==true){
-//         console.log(req.files);
-//         db.query("select * from user", function(error, results){
-//             res.send("file succesfully uploaded.      " + error + "    "+results);
-//         })
-//     }
-// });
 
-//also the fileshare.ejs and fileShare.js
+});
 //=============================================
 
 

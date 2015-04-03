@@ -13,6 +13,17 @@ router.get('/', function(req, res, next) {
   	res.render('index', { title: 'Welcome', logedIn: "no", footer: '' });
   }
 });
+//===========upload============
+router.get('/upload', function(req,res,next){
+	if(req.session.roomNumber!=undefined && req.session.userName!=undefined){
+			res.render('page_after_login/upload', {roomNumber: req.session.roomNumber, userName: req.session.userName});
+		}else{
+			res.render('index', { title: 'Welcome', logedIn: "no", footer: '' });
+		}
+});
+
+//=============================
+
 router.get('/profile', function(req, res, next) {
    um.login(req.session.userName,req.session.password,function(){
   		um.getProfile(req.session.userName,function(lastName,firstName,suffix,description){
