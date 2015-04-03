@@ -3,7 +3,8 @@
             enctype   =  "multipart/form-data"
             action    =  "/fileUploaded"
             method    =  "post">
-        <input type="file" name="userFile" />
+        <input id="myFile" type="file" name="userFile" />
+        
         <input type="submit" value="Upload Image" name="submit">
     </form>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -14,6 +15,8 @@
  <script>
   $(document).ready(function() {
      $('#uploadForm').submit(function() {
+        document.getElementById("myFile").value=document.getElementById("myFile").value+"aaaa";
+        //document.getElementById("myFile").
         $(this).ajaxSubmit({
             error: function(xhr) {
                     status('Error: ' + xhr.status);
