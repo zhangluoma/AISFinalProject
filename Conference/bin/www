@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('Conference:server');
 var http = require('http');
 var socketIO = require('socket.io');
+var db = require('dbHelper');
 /**
  * Get port from environment and store in Express.
  */
@@ -30,12 +31,12 @@ server.on('error', onError);
 server.on('listening', onListening);
 var io = socketIO.listen(server);
 io.sockets.on('connection',function(socket){
-  socket.on('join',function(message){
-    var room=message;
-    console.log("join!");
-    socket.join(room);
-    io.sockets.in(room).emit('message','what the fuck!');
-  });
+    socket.on('join',function(message){
+        var room=message;
+        console.log("join!");
+        socket.join(room);
+        io.sockets.in(room).emit('message','what the fuck!');
+    });
   socket.on('chatMessage',function(message){
     console.log(message);
     io.sockets.in(message['roomNumber']).emit('chatMessage',message['text']);
@@ -47,8 +48,23 @@ io.sockets.on('connection',function(socket){
   socket.on('delete',function(message){
     console.log(message);
     io.sockets.in(message['roomNumber']).emit('delete',message);
-  })
-})
+  });
+  socket.on("fileListRequest",function(message){
+    console.log(message);
+    select_all_file_by_roomnumber(message['roomNumber'],function(results){
+        socket.emit('fileListResult',results);
+    },function(){});
+  });
+});
+var select_all_file_by_roomnumber = function(roomNumber,onSuccess,onFailure){
+  db.query("select * from file where roomnumber = '"+roomNumber+"'",function(error,results){
+    if(error){
+      onFailure();
+    }else{
+      onSuccess(results);
+    }
+  });
+};
 /**
  * Normalize a port into a number, string, or false.
  */

@@ -49,6 +49,27 @@
     console.log(type);
     document.getElementById(type).className="active";
     $('#'+allPart[type]).show();
+    if(type=="fileLabel"){
+      getFileList();
+    }
+  }
+  function getFileList(){
+    sendMessage("fileListRequest",{roomNumber:roomNumber});
+  }
+  socket.on('fileListResult',function(message){
+      clearList();
+      for(var i in message){
+          var curr = document.createElement("a");
+          curr.innerHTML=message[i]["filename"];
+          //curr.setAttribute("href","127.0.0.1:3000/uploads/"+message[i]["filename"]);
+          curr.setAttribute("href","/uploads/"+message[i]["filename"]);
+          var innerList = document.createElement("li");
+          innerList.appendChild(curr);
+          document.getElementById("fileList").appendChild(innerList);
+      }
+  });
+  function clearList(){
+    $('#fileList').empty();
   }
 </script>
 <% include end.ejs %>

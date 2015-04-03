@@ -29,18 +29,17 @@ app.post('/upload', function(req, res) {
             file_ext = files.file.name.split('.').pop(),
             index = old_path.lastIndexOf('/') + 1,
             file_name = files.file.name.split('.')[0],
-            new_path = path.join(process.env.PWD, '/uploads/', file_name + '.' + file_ext),
+            new_path = path.join(process.env.PWD, '/public/uploads/', file_name + '.' + file_ext),
             roomNmber = fields.roomNumber;
 
         //add to db
         var addFiletoTable = function(){
-          db.query("insert into file(roomnumber,filename) values('"+roomNmber+"','"+file_name+"')",function(error,results){});
+          db.query("insert into file(roomnumber,filename) values('"+roomNmber+"','"+file_name+"."+file_ext+"')",function(error,results){});
         };
         //test
         var select_all_file_by_roomnumber = function(){
           db.query("select * from file where roomnumber = '"+roomNmber+"'",function(error,results){
             console.log(results);
-            console.log("error = "error);
             console.log("just printed the sql select result.");
           });
         };
@@ -52,10 +51,10 @@ app.post('/upload', function(req, res) {
                 fs.unlink(old_path, function(err) {
                     if (err) {
                         res.status(500);
-                        res.json({'success': false});
+                        res.json({'fail': false});
                     } else {
                         res.status(200);
-                        res.json({'success': true});
+                        res.redirect("dashboard");
                     }
                 });
             });
