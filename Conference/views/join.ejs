@@ -6,14 +6,21 @@
         </div>
         <form action="joinRoomRequest" method="get"> 
         <div class="row">    
+          <a style="color:red"><%=alert%></a>
           <div class="col-lg-4 col-lg-offset-4">
             <!--<label for="inputEmail" class="sr-only">Email address</label>-->
             <input style="margin-bottom:2%" id="roomNumber" class="form-control" placeholder="Room number" name="roomNumber" <%if(roomNumber!=null){%>value="<%=roomNumber%>"<%}%> required autofocus> 
           </div>
+
+          <div class="col-lg-4 col-lg-offset-4">
+            <!--<label for="inputEmail" class="sr-only">Email address</label>-->
+            <input style="margin-bottom:2%" id="roomPassword" class="form-control" placeholder="Password" name="roomPassword" <%if(roomPassword!=null){%>value="<%=roomPassword%>"<%}%> required autofocus> 
+          </div>
+
         </div>
         <div class="col-lg-4 col-lg-offset-4">      
           <button class="btn btn-lg btn-primary btn-block" style="submit">Join</button>
         </div>
       </form>
     </div>
-<%include end.ejs%>
+<%include end.ejs%> 
