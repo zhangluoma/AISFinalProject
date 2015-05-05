@@ -50,7 +50,11 @@ router.get('/logout', function(req, res, next) {
 
 
 router.get('/back', function(req, res, next) {
-   res.redirect('/');
+	um.login(req.session.userName,req.session.password,function(){
+		res.render('join', { title: 'Welcome', roomNumber:'' ,userName:req.session.userName,logedIn: "yes", userId:req.session.userId,footer: '', roomPassword: req.session.roomPassword, alert: " " });
+	}, function(){
+		res.render('index', { title: 'Welcome', logedIn: "no", footer: '' });
+	});
 });
 
 
@@ -103,34 +107,58 @@ router.post('/login', function(req, res, next) {
 });
 
 
-router.get('/joinRoomRequest', function(req, res, next) {
+router.post('/joinRoomRequest', function(req, res, next) {
 	um.login(req.session.userName,req.session.password,function(){	
 	//on login success	
-		var roomNumber = req.param('roomNumber');
-		var roomPassword = req.param('roomPassword');
+		var roomNumber = req.body.roomNumber;
+		var roomPassword = req.body.roomPassword;
+		var requestType = req.body.requestType;
 		req.session.roomNumber=roomNumber;
 		req.session.roomPassword=roomPassword;
-		
-		//verify room credential function
 		var db = require('dbHelper');
-		var checkRoomCredential = function(roomNumber, password, onSuccess, onFailure){
-			db.query("select * from room where roomnumber = '"+roomNumber+"' AND password = '"+roomPassword+"'",function(error,results){
-				if(error || results.length==0){
-					onFailure();
-				}else{
-					onSuccess();
-				}
+
+		console.log("request type = "+requestType);
+
+		if (requestType==="join"){
+			//verify room credential function
+			var checkRoomCredential = function(roomNumber, password, onSuccess, onFailure){
+				db.query("select * from room where roomnumber = '"+roomNumber+"' AND password = '"+roomPassword+"'",function(error,results){
+					if(error || results.length==0){
+						onFailure();
+					}else{
+						onSuccess();
+					}
+				});
+			}
+			//verify room credential
+		  	checkRoomCredential(roomNumber, roomPassword,
+		  	function(){	//room credential good
+		  		res.render('page_after_login/body', {userName:req.session.userName,roomNumber: roomNumber, roomPassword: req.session.roomPassword});
+			},
+			function(){	//room credential bad
+				res.render('join', { title: 'Welcome', roomNumber:'' ,userName:req.session.userName,logedIn: "yes", userId:req.session.userId,footer: '', roomPassword: req.session.roomPassword, alert: "room does not exist or incorrect password." });
+			});
+		}else{
+			//verify existance function
+			var checkRoomExistance = function(roomNumber, onSuccess, onFailure){
+				db.query("select * from room where roomnumber = '"+roomNumber+"'",function(error,results){
+					if(error || results.length==0){
+						onFailure();
+					}else{
+						onSuccess();
+					}
+				});
+			}
+			//verify existance 
+		  	checkRoomExistance(roomNumber,
+		  	function(){	//room already existed
+				res.render('join', { title: 'Welcome', roomNumber:'' ,userName:req.session.userName,logedIn: "yes", userId:req.session.userId,footer: '', roomPassword: req.session.roomPassword, alert: "room with this room number already exists." });
+			},
+			function(){	//room not exist
+				db.query("insert into room(roomNumber,password) values('"+roomNumber+"','"+roomPassword+"')",function(error,results){});
+		  		res.render('page_after_login/body', {userName:req.session.userName,roomNumber: roomNumber, roomPassword: req.session.roomPassword});
 			});
 		}
-
-		//verify room credential
-	  	checkRoomCredential(roomNumber, roomPassword,
-	  	function(){	//room credential good
-	  		res.render('page_after_login/body', {userName:req.session.userName,roomNumber: roomNumber, roomPassword: req.session.roomPassword});
-		},
-		function(){	//room credential bad
-			res.render('join', { title: 'Welcome', roomNumber:'' ,userName:req.session.userName,logedIn: "yes", userId:req.session.userId,footer: '', roomPassword: req.session.roomPassword, alert: "room does not exist or incorrect password." });
-		});
 
 	},function(){	//on login fail
 		res.render('index', { title: 'Welcome', logedIn: "no", footer: '' });
